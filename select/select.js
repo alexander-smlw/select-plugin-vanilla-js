@@ -11,6 +11,7 @@ const getTemplate = (data = [], placeholder, selectedId) => {
   })
 
   return `
+    <div class="select__backdrop" data-type="backdrop"></div>
     <div class="select__input" data-type="input">
       <span data-type="value">${text}</span>
       <i class="fas fa-chevron-down" data-type="arrow"></i>
@@ -25,7 +26,7 @@ const getTemplate = (data = [], placeholder, selectedId) => {
 }
 
 export class Select {
-  constructor(selector, options) {
+  constructor(selector, options, cb) {
     this.$el = document.querySelector(selector)
     this.options = options
     this.selectedId = options.selectedId
@@ -57,6 +58,8 @@ export class Select {
       const id = event.target.dataset.id
 
       this.select(id)
+    } else if (type === 'backdrop') {
+      this.close()
     }
   }
 
@@ -80,6 +83,8 @@ export class Select {
       el.classList.remove('selected')
     });
     this.$el.querySelector(`[data-id="${id}"]`).classList.add('selected')
+    
+    this.options.onSelect ? this.options.onSelect(this.current) : null
 
     this.close()
   }
